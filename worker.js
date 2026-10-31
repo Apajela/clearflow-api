@@ -9,10 +9,12 @@ export default {
 
       await client.connect();
 
-      const result = await client.query(`
-        SELECT current_database() AS database,
-               NOW() AS server_time
-      `);
+     const result = await client.query(`
+  SELECT table_name
+  FROM information_schema.tables
+  WHERE table_schema = 'public'
+  ORDER BY table_name
+`);
 
       await client.end();
 
