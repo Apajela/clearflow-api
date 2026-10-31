@@ -1,0 +1,11 @@
+{
+  "name": "clearflow-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-31",
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "9a3350c769d74f129407746c8edac82c"
+    }
+  ]
+}
