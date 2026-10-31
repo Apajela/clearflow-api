@@ -2,33 +2,27 @@ import { Client } from "pg";
 
 export default {
   async fetch(request, env) {
-    try {
-      const client = new Client({
-        connectionString: env.HYPERDRIVE.connectionStringimport { Client } from "pg";
-
-export default {
-  async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Allow website/frontend to call this API
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     };
 
-    // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, {
         headers: {
           ...corsHeaders,
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type",
         },
       });
     }
 
+    let client;
+
     try {
-      const client = new Client({
+      client = new Client({
         connectionString: env.HYPERDRIVE.connectionString,
       });
 
@@ -42,8 +36,6 @@ export default {
           ORDER BY id
         `);
 
-        await client.end();
-
         return new Response(
           JSON.stringify({
             status: "success",
@@ -53,8 +45,6 @@ export default {
           { headers: corsHeaders }
         );
       }
-
-      await client.end();
 
       // API home
       return new Response(
@@ -77,6 +67,10 @@ export default {
           headers: corsHeaders,
         }
       );
+    } finally {
+      if (client) {
+        await client.end().catch(() => {});
+      }
     }
   },
 };
