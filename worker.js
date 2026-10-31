@@ -54,6 +54,25 @@ export default {
 
       let result;
 
+// READ-ONLY DATABASE INSPECTION
+if (url.pathname === "/api/db-inspection") {
+  const inspection = await client.query(`
+    SELECT table_name, column_name, data_type
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+    ORDER BY table_name, ordinal_position
+  `);
+
+  return new Response(
+    JSON.stringify({
+      status: "success",
+      count: inspection.rows.length,
+      data: inspection.rows,
+    }),
+    { headers: corsHeaders }
+  );
+}
+
       // GET /api/items
       if (url.pathname === "/api/items") {
         result = await client.query(`
@@ -120,6 +139,8 @@ export default {
           { status: 404, headers: corsHeaders }
         );
       }
+
+
 
       const data = result.rows.map(toCamelCase);
 
